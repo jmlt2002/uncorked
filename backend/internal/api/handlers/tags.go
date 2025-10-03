@@ -13,7 +13,7 @@ type TagHandler struct {
 	dbConn *sql.DB
 }
 
-func newTagsHandler(dbConn *sql.DB) *TagHandler {
+func NewTagHandler(dbConn *sql.DB) *TagHandler {
 	return &TagHandler{dbConn: dbConn}
 }
 
