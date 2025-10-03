@@ -19,7 +19,7 @@ func NewStorageLocationHandler(dbConn *sql.DB) *StorageLocationHandler {
 
 func (h *StorageLocationHandler) CreateStorageLocation(c *gin.Context) {
 	var req struct {
-		UserID int    `json:"user_id" binding:"required"`
+		UserID int64  `json:"user_id" binding:"required"`
 		Name   string `json:"name" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -38,14 +38,15 @@ func (h *StorageLocationHandler) CreateStorageLocation(c *gin.Context) {
 
 func (h *StorageLocationHandler) DeleteStorageLocation(c *gin.Context) {
 	var req struct {
-		ID int `json:"id" binding:"required"`
+		ID     int64 `json:"id" binding:"required"`
+		UserID int64 `json:"user_id" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
-	err := db.DeleteStorageLocation(h.dbConn, context.Background(), req.ID)
+	err := db.DeleteStorageLocation(h.dbConn, context.Background(), req.ID, req.UserID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete storage location"})
 		return

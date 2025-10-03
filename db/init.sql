@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS wine_tags CASCADE;
 DROP TABLE IF EXISTS tags CASCADE;
 DROP TABLE IF EXISTS reviews CASCADE;
 DROP TABLE IF EXISTS wines CASCADE;
@@ -8,6 +9,7 @@ DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    username VARCHAR(100) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL
 );
@@ -19,13 +21,22 @@ CREATE TABLE storage_locations (
     location_name VARCHAR(255) NOT NULL
 );
 
--- TAGS
+
+-- TAGS (reusable definitions)
 CREATE TABLE tags (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    wine_id BIGINT NOT NULL REFERENCES wines(id) ON DELETE CASCADE,
     tag_name VARCHAR(100) NOT NULL,
-    color VARCHAR(7) CHECK (color ~ '^#[0-9A-Fa-f]{6}$')
+    color VARCHAR(7) CHECK (color ~ '^#[0-9A-Fa-f]{6}$'),
+    UNIQUE(user_id, tag_name)
+);
+
+-- WINE_TAGS (associates tags with wines)
+CREATE TABLE wine_tags (
+    id BIGSERIAL PRIMARY KEY,
+    wine_id BIGINT NOT NULL REFERENCES wines(id) ON DELETE CASCADE,
+    tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
+    UNIQUE(wine_id, tag_id)
 );
 
 -- WINES
@@ -40,11 +51,11 @@ CREATE TABLE wines (
     photo_url TEXT
 );
 
--- optimize reads
 CREATE INDEX idx_wines_user_id ON wines (user_id);
 CREATE INDEX idx_wines_storage_location_id ON wines (storage_location_id);
-CREATE INDEX idx_tags_wine_id ON tags (wine_id);
 CREATE INDEX idx_tags_user_id ON tags (user_id);
 CREATE INDEX idx_tags_tag_name ON tags (tag_name);
+CREATE INDEX idx_wine_tags_wine_id ON wine_tags (wine_id);
+CREATE INDEX idx_wine_tags_tag_id ON wine_tags (tag_id);
 CREATE INDEX idx_reviews_wine_id ON reviews (wine_id);
 CREATE INDEX idx_reviews_user_id ON reviews (user_id);
