@@ -2,8 +2,8 @@ FROM postgres:16-alpine
 
 # Set environment variables (can be overridden by docker-compose or at runtime)
 ENV POSTGRES_DB=uncorked
-ENV POSTGRES_USER=user
-ENV POSTGRES_PASSWORD=user
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
 
 # Copy the initialization script
 

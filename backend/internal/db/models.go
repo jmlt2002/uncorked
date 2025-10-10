@@ -3,6 +3,7 @@ package db
 type User struct {
 	ID           int64  `json:"id"`
 	Name         string `json:"name"`
+	Username     string `json:"username"`
 	Email        string `json:"email"`
 	PasswordHash string `json:"password_hash"`
 }
@@ -16,9 +17,14 @@ type StorageLocation struct {
 type Tag struct {
 	ID     int64  `json:"id"`
 	UserID int64  `json:"user_id"`
-	WineID int64  `json:"wine_id"`
 	Name   string `json:"tag_name"`
 	Color  string `json:"color"`
+}
+
+type WineTag struct {
+	ID     int64 `json:"id"`
+	WineID int64 `json:"wine_id"`
+	TagID  int64 `json:"tag_id"`
 }
 
 type Wine struct {

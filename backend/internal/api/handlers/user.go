@@ -19,7 +19,7 @@ func NewUserHandler(dbConn *sql.DB) *UserHandler {
 
 func (h *UserHandler) Login(c *gin.Context) {
 	var req struct {
-		Email    string `json:"email" binding:"required"`
+		Username string `json:"username" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -27,9 +27,9 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	user, err := db.AuthenticateUser(h.dbConn, context.Background(), req.Email, req.Password)
+	user, err := db.AuthenticateUser(h.dbConn, context.Background(), req.Username, req.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
 		return
 	}
 
@@ -39,6 +39,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 func (h *UserHandler) Register(c *gin.Context) {
 	var req struct {
 		Name     string `json:"name" binding:"required"`
+		Username string `json:"username" binding:"required"`
 		Email    string `json:"email" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
@@ -47,7 +48,7 @@ func (h *UserHandler) Register(c *gin.Context) {
 		return
 	}
 
-	user, err := db.CreateUser(h.dbConn, context.Background(), req.Name, req.Email, req.Password)
+	user, err := db.CreateUser(h.dbConn, context.Background(), req.Name, req.Username, req.Email, req.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create user"})
 		return

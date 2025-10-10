@@ -1,25 +1,13 @@
-# Use official Golang image as the base
-FROM golang:1.24.7-alpine
+FROM golang:1.24-alpine AS build
 
 WORKDIR /app
-
-# Install git (if needed for go mod)
-RUN apk add --no-cache git
-
-# Copy go mod and sum files
 COPY go.mod go.sum ./
-
-# Download dependencies
 RUN go mod download
-
-# Copy the rest of the backend source code
 COPY . .
+RUN CGO_ENABLED=0 go build -o server ./cmd/server
 
-# Build the backend server
-RUN go build -o server ./cmd/server
-
-# Expose the backend port
+FROM alpine:latest
+WORKDIR /app
+COPY --from=build /app/server ./server
 EXPOSE 8080
-
-# Run the backend server
-CMD ["/app/server"]
+CMD ["./server"]
