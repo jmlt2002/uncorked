@@ -1,3 +1,4 @@
+
 DROP TABLE IF EXISTS wine_tags CASCADE;
 DROP TABLE IF EXISTS tags CASCADE;
 DROP TABLE IF EXISTS wines CASCADE;
@@ -20,15 +21,6 @@ CREATE TABLE storage_locations (
     location_name VARCHAR(255) NOT NULL
 );
 
--- TAGS
-CREATE TABLE tags (
-    id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    wine_id BIGINT NOT NULL REFERENCES wines(id) ON DELETE CASCADE,
-    tag_name VARCHAR(100) NOT NULL,
-    color VARCHAR(7) CHECK (color ~ '^#[0-9A-Fa-f]{6}$')
-);
-
 -- WINES
 CREATE TABLE wines (
     id BIGSERIAL PRIMARY KEY,
@@ -41,7 +33,7 @@ CREATE TABLE wines (
     photo_url TEXT
 );
 
--- TAGS (reusable definitions)
+-- TAGS
 CREATE TABLE tags (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
